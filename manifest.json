@@ -1,7 +1,7 @@
 {
   "name": "taskpad",
   "short_name": "taskpad",
-  "start_url": "/preact-taskpad",
+  "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#fff",
