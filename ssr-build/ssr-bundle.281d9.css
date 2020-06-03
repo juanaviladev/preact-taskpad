@@ -1,8 +1,4 @@
 html, body {
-	height: 100%;
-	width: 100%;
-	padding: 0;
-	margin: 0;
 	background: #FAFAFA;
 	font-family: 'Helvetica Neue', arial, sans-serif;
 	font-weight: 400;
@@ -13,10 +9,6 @@ html, body {
 
 * {
 	box-sizing: border-box;
-}
-
-#app {
-	height: 100%;
 }
 
 /*!
@@ -10244,4 +10236,4 @@ a.text-dark:hover, a.text-dark:focus {
 }
 /*# sourceMappingURL=bootstrap.css.map */
 
-/*# sourceMappingURL=ssr-bundle.02d2a.css.map*/
+/*# sourceMappingURL=ssr-bundle.281d9.css.map*/
