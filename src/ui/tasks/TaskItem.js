@@ -18,7 +18,8 @@ export class TaskItem extends Component {
 
     onCancelEdit() {
         this.setState(prevState => ({
-            editing: false
+            editing: false,
+            body: this.props.item.body
         }))
     }
 

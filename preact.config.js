@@ -1,3 +1,3 @@
 export default (config) => {
-   // config.output.publicPath = '/preact-taskpad/';
+    config.output.publicPath = '/preact-taskpad/';
 };
