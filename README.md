@@ -1,4 +1,4 @@
-# pad-notes
+# TaskPad
 
 ## CLI Commands
 
