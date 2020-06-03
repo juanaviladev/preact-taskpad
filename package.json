@@ -8,6 +8,7 @@
     "serve": "sirv build --cors --single",
     "dev": "preact watch",
     "lint": "eslint src",
+    "deploy": "gh-pages -d build",
     "test": "jest"
   },
   "eslintConfig": {
@@ -30,6 +31,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.5.0",
+    "gh-pages": "^3.0.0",
     "preact": "^10.3.2",
     "preact-feather": "^4.1.0",
     "preact-render-to-string": "^5.1.4",

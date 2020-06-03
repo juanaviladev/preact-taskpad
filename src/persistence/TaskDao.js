@@ -2,27 +2,27 @@ export class TaskDao {
 
     init() { }
 
-    create(note) {
+    async create(note) {
         throw new Error('Unimplemented method!');
     }
 
-    read(note) {
+    async read(note) {
         throw new Error('Unimplemented method!');
     }
 
-    readAll() {
+    async readAll() {
         throw new Error('Unimplemented method!');
     }
 
-    update(note) {
+    async update(note) {
         throw new Error('Unimplemented method!');
     }
 
-    delete(note) {
+    async delete(note) {
         throw new Error('Unimplemented method!');
     }
 
-    deleteAll() {
+    async deleteAll() {
         throw new Error('Unimplemented method!');
     }
 

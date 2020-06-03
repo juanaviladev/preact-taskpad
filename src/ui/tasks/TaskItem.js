@@ -1,26 +1,19 @@
 import {h, Component} from 'preact';
-import style from './style.css';
 import 'bootstrap/dist/css/bootstrap.css';
-import {SQLiteTaskDao} from "../../data/SQLiteTaskDao";
+import {SQLiteTaskDao} from "../../persistence/SQLiteTaskDao";
 
 export class TaskItem extends Component {
 
     state = {
         editing: false,
+        body: this.props.item.body,
+        error: false,
         savingChanges: false,
     }
 
     constructor(props) {
         super(props);
-        this.state.body = props.item.body
         this.dao = new SQLiteTaskDao()
-    }
-
-    async componentDidMount() {
-        // start a timer for the clock:
-        this.listener = this.props.listener
-        this.dao = new SQLiteTaskDao()
-        await this.dao.init()
     }
 
     onCancelEdit() {
@@ -35,14 +28,15 @@ export class TaskItem extends Component {
         }))
     }
 
-    onBodyChange(body) {
-        this.setState(prevState => ({
-            body: body
-        }))
-    }
-
-    onSaveChangesClick(ev) {
+    onSaveChangesClick() {
         const body = this.state.body
+        if(body.trim().length === 0) {
+            this.setState(prevState => ({
+                error: true
+            }))
+            return
+        }
+
         this.props.listener.onSaveChangesClick(this.props.item.id, body)
         this.setState(prevState => ({
             editing: false
@@ -50,12 +44,14 @@ export class TaskItem extends Component {
     }
 
     render({}, {}) {
-        console.log("aa")
         const editMode = this.state.editing;
         let body;
         if (editMode) {
             body = <div className="form-group">
-                <textarea onInput={(e) => this.onBodyChange(e.target.value)} className="card-text form-control" value={this.state.body} rows="3"/>
+                <textarea onChange={e => this.onBodyChange(e)} className={(this.state.error ? "is-invalid" : "") + " card-text form-control"} value={this.state.body} rows="5"/>
+                <div className="invalid-feedback">
+                    El contenido de la tarea no puede quedar en blanco
+                </div>
             </div>
         } else {
             body = <p className="card-text">{this.state.body}</p>
@@ -73,9 +69,9 @@ export class TaskItem extends Component {
                             <div className={"spinner-border spinner-border-sm text-primary mr-2 " + (saving ? '' : 'd-none')} role="status">
                                 <span className="sr-only">Loading...</span>
                             </div>
-                            <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={this.onCancelEdit.bind(this)}>Cancelar </a>
-                            <a href="#" className={'card-link ' + (this.state.editing ? 'd-none' : 'mr-1')} onClick={this.onEditClick.bind(this)}>Editar </a>
-                            <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={this.onSaveChangesClick.bind(this)}>Guardar cambios </a>
+                            <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={e => this.onCancelEdit(e)}>Cancelar </a>
+                            <a href="#" className={'card-link ' + (this.state.editing ? 'd-none' : 'mr-1')} onClick={e =>this.onEditClick(e)}>Editar </a>
+                            <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={e => this.onSaveChangesClick(e)}>Guardar cambios </a>
                             <a href="#" className="card-link" onClick={() => this.props.listener.onDeleteClick(this.props.id)}>Eliminar</a>
                         </div>
                     </div>
@@ -83,6 +79,13 @@ export class TaskItem extends Component {
             </div>
 
         );
+    }
+
+    onBodyChange(ev) {
+        const body = ev.target.value
+        this.setState(prevState => ({
+            body: body
+        }))
     }
 
 }
