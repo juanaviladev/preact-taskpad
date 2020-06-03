@@ -1,6 +1,6 @@
 {
-  "name": "taskpad",
-  "short_name": "taskpad",
+  "name": "TaskPad",
+  "short_name": "TaskPad",
   "start_url": "./",
   "display": "standalone",
   "orientation": "portrait",
