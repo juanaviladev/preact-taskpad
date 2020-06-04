@@ -1,10 +1,21 @@
 import {Component} from 'preact';
 import Header from '../header/header';
 import React from "preact/compat";
-import {taskDaoInstance} from "../../Injection";
 import TaskList from "../tasks/TaskList";
+import { dao } from "../../Locator";
 
 export default class App extends Component {
+
+    constructor(props) {
+        super(props);
+    }
+
+    async componentDidMount() {
+        const inst = await dao
+        this.setState(prevState => ({
+            dao: inst,
+        }))
+    }
 
     render() {
         return (
@@ -16,7 +27,7 @@ export default class App extends Component {
                     creatingNewTask={this.state.creatingNewTask}
                     cancelNewTaskListener={this.onNewTaskClick.bind(this)}
                     onNewTaskDoneListener={this.onNewTaskDone.bind(this)}
-                    dao={taskDaoInstance}
+                    dao={this.state.dao}
                 />
             </div>
         );

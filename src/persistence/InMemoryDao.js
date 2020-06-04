@@ -2,12 +2,13 @@ import { TaskDao } from './TaskDao';
 
 export class InMemoryDao extends TaskDao {
 
-    constructor(storage) {
+    constructor() {
         super();
         this.tableName = "task_table"
         this.initiated = false
         this.sequence = "task_seq"
-        this.conn = storage;
+        this.tasks = {};
+        this.sequence = 0;
     }
 
     init() {
@@ -17,7 +18,7 @@ export class InMemoryDao extends TaskDao {
         const existingTable = this.__restore()
         if(!existingTable) {
             this.__save({})
-            this.conn.setItem(this.sequence, "0")
+            this.sequence = 0
         }
         this.initiated = true
     }
@@ -34,11 +35,11 @@ export class InMemoryDao extends TaskDao {
     }
 
     __save(table) {
-        this.conn.setItem(this.tableName,JSON.stringify(table))
+        this.tasks = table
     }
 
     __restore() {
-        return JSON.parse(this.conn.getItem(this.tableName))
+        return this.tasks
     }
 
     read(id) {
@@ -59,9 +60,9 @@ export class InMemoryDao extends TaskDao {
     }
 
     __nextId() {
-        let lastId = Number(this.conn.getItem(this.sequence))
+        let lastId = this.sequence
         const newId = ++lastId
-        this.conn.setItem(this.sequence,newId.toString())
+        this.sequence = newId
         return newId
     }
 
@@ -73,6 +74,6 @@ export class InMemoryDao extends TaskDao {
 
     deleteAll() {
         this.__save({})
-        this.conn.setItem(this.sequence, "0")
+        this.sequence = 0
     }
 }

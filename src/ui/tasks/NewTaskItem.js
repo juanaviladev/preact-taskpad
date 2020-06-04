@@ -3,12 +3,12 @@ import 'bootstrap/dist/css/bootstrap.css';
 
 export class NewTaskItem extends Component {
 
-    state = {
-        body: ""
-    }
-
     constructor(props) {
         super(props);
+    }
+
+    state = {
+        body: ""
     }
 
     render({}, {}) {

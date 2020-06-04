@@ -1,12 +1,9 @@
 import {h, Component} from 'preact';
 import 'bootstrap/dist/css/bootstrap.css';
-import {SQLiteTaskDao} from "../../persistence/SQLiteTaskDao";
 import {NewTaskItem} from "./NewTaskItem";
 import Placeholder from "./img/list_placeholder.png";
-import Header from "../header/header";
 import React from "preact/compat";
 import {TaskItem} from "./TaskItem";
-import {taskDaoInstance} from "../../Injection";
 
 export default class TaskList extends Component {
 
@@ -16,27 +13,31 @@ export default class TaskList extends Component {
 
     constructor(props) {
         super(props);
-        this.itemListener = {
-            onSaveChangesClick: async (id, body) => {
-                await this.dao.update({id, body})
-            },
-            onDeleteClick: async (id) => {
-                await this.dao.delete(id)
-                this.setState(prevState => ({
-                    tasks: prevState.tasks.filter(el => el.id !== id)
-                }));
-            }
+        this.onSaveChangesClick = async (id, idx, body) => {
+            await this.props.dao.update({id, body})
+            this.setState(prevState => {
+                prevState.tasks[idx] = {id, body}
+                return ({
+                    tasks: prevState.tasks
+                });
+            });
+        }
+        this.onDeleteClick = async (id) => {
+            await this.props.dao.delete(id)
+            this.setState(prevState => ({
+                tasks: prevState.tasks.filter(el => el.id !== id)
+            }));
         }
     }
 
-    async componentDidMount() {
-        this.dao = this.props.dao
-        await this.dao.init()
-        const tasks = await this.dao.readAll()
-        await this.dao.init()
-        this.setState({
-            tasks,
-        })
+    async componentDidUpdate(previousProps, previousState, snapshot) {
+        if (previousProps.dao)
+            return
+
+        const tasks = await this.props.dao.readAll()
+        this.setState(prevState => ({
+            tasks
+        }))
     }
 
     render() {
@@ -49,17 +50,18 @@ export default class TaskList extends Component {
         }
         const items = this.state.tasks.map((item, idx) =>
             <div className="col-10 offset-1">
-                <TaskItem key={item.id} id={item.id} listener={this.itemListener} item={item}/>
+                <TaskItem key={item.id} id={item.id} idx={idx} onSaveChangesListener={this.onSaveChangesClick.bind(this)}
+                          onDeleteListener={this.onDeleteClick.bind(this)} item={item}/>
             </div>
         )
         const showPlaceholder = items.length === 0 && !this.props.creatingNewTask
         let list;
         if (showPlaceholder) {
             list = [
-                    <div className="row d-flex justify-content-center align-items-center">
-                        <img alt="Lista vacía" className="col-lg-4 col-md-8 col-sm-10 img-fluid" src={Placeholder}/>
-                    </div>,
-                    <h2 className="text-center">No hay ninguna tarea guardada</h2>
+                <div className="row d-flex justify-content-center align-items-center">
+                    <img alt="Lista vacía" className="col-lg-4 col-md-8 col-sm-10 img-fluid" src={Placeholder}/>
+                </div>,
+                <h2 className="text-center">No hay ninguna tarea guardada</h2>
             ]
         } else {
             list = (
@@ -81,7 +83,7 @@ export default class TaskList extends Component {
     }
 
     async onNewTaskSaveClick(body) {
-        const newTask = await this.dao.create({body})
+        const newTask = await this.props.dao.create({body})
         this.props.onNewTaskDoneListener()
         this.setState(prevState => ({
             tasks: [...prevState.tasks, newTask],

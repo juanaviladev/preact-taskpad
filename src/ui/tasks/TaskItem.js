@@ -1,8 +1,11 @@
 import {h, Component} from 'preact';
 import 'bootstrap/dist/css/bootstrap.css';
-import {SQLiteTaskDao} from "../../persistence/SQLiteTaskDao";
 
 export class TaskItem extends Component {
+
+    constructor(props) {
+        super(props);
+    }
 
     state = {
         editing: false,
@@ -11,15 +14,11 @@ export class TaskItem extends Component {
         savingChanges: false,
     }
 
-    constructor(props) {
-        super(props);
-        this.dao = new SQLiteTaskDao()
-    }
-
     onCancelEdit() {
         this.setState(prevState => ({
             editing: false,
-            body: this.props.item.body
+            body: this.props.item.body,
+            error: false,
         }))
     }
 
@@ -37,11 +36,10 @@ export class TaskItem extends Component {
             }))
             return
         }
-
-        this.props.listener.onSaveChangesClick(this.props.item.id, body)
         this.setState(prevState => ({
             editing: false
         }))
+        this.props.onSaveChangesListener(this.props.item.id, this.props.idx, body)
     }
 
     render({}, {}) {
@@ -73,7 +71,7 @@ export class TaskItem extends Component {
                             <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={e => this.onCancelEdit(e)}>Cancelar </a>
                             <a href="#" className={'card-link ' + (this.state.editing ? 'd-none' : 'mr-1')} onClick={e =>this.onEditClick(e)}>Editar </a>
                             <a href="#" className={'card-link ' + (!this.state.editing ? 'd-none' : 'mr-1')} onClick={e => this.onSaveChangesClick(e)}>Guardar cambios </a>
-                            <a href="#" className="card-link" onClick={() => this.props.listener.onDeleteClick(this.props.id)}>Eliminar</a>
+                            <a href="#" className="card-link" onClick={() => this.props.onDeleteListener(this.props.id)}>Eliminar</a>
                         </div>
                     </div>
                 </div>
