@@ -16,21 +16,23 @@ export class SQLiteTaskDao extends TaskDao {
             return Promise.resolve()
 
         return new Promise((resolve, reject) => {
-            openDatabase(this.shortName, this.version, this.displayName, this.maxSize,(db) => {
-                if(db === null)
+            try {
+                this.db = openDatabase(this.shortName, this.version, this.displayName, this.maxSize);
+                if (this.db === null)
                     reject()
 
-                this.db = db
                 this.db.transaction(tx => {
                     tx.executeSql('CREATE TABLE IF NOT EXISTS task (id INTEGER PRIMARY KEY AUTOINCREMENT, body TEXT NOT NULL)');
-                },(err) => {
-                    reject()
-                },() => {
+                }, (err) => {
+                    reject(err)
+                }, () => {
                     this.initiated = true
                     resolve()
                 });
-            });
-
+            }
+            catch (e) {
+                reject(e)
+            }
         })
 
     }

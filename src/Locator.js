@@ -5,11 +5,13 @@ import {InMemoryDao} from "./persistence/InMemoryDao";
 const _dao = (async () => {
     let dao;
     if (typeof window !== "undefined") {
-        if (window.openDatabase) {
-            dao = new SQLiteTaskDao()
-        } else if (window.localStorage) {
+        if (window.localStorage) {
             dao = new LocalStorageTaskDao(window.localStorage)
-        } else {
+        }
+        else if(window.openDatabase) {
+            dao = new SQLiteTaskDao()
+        }
+        else {
             dao = new InMemoryDao();
         }
     } else {
